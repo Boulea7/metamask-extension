@@ -17,7 +17,7 @@ import { AlertsName } from '../constants';
 
 /**
  * Blocking alert when a money-account deposit has no funding tokens on the
- * selected account. Matches mobile `useAccountNoFundsAlert`.
+ * selected account.
  */
 export function useAccountNoFundsAlert(): Alert[] {
   const t = useI18nContext();

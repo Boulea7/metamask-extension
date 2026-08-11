@@ -136,8 +136,8 @@ export function PayWithRow({
     modal,
   } = usePayWithToken();
 
-  // Match mobile: when the selected account has no funding tokens, show an
-  // empty "Select payment method" placeholder instead of an endless skeleton.
+  // When the selected account has no funding tokens, show an empty
+  // "Select payment method" placeholder instead of an endless skeleton.
   if (!displayToken && !hasAccountNoFunds) {
     return <PayWithRowSkeleton />;
   }
