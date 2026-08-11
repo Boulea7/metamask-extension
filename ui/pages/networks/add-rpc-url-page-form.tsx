@@ -60,6 +60,7 @@ export const AddRpcUrlPageForm = ({
   const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nextUrl = event.target.value;
     setUrl(nextUrl);
+    validationRequestIdRef.current += 1;
     setRpcValidationError(undefined);
   };
 
@@ -94,10 +95,7 @@ export const AddRpcUrlPageForm = ({
 
   const error = urlError ?? rpcValidationError;
   const isSubmitDisabled =
-    !url.trim() ||
-    url !== debouncedUrl ||
-    Boolean(error) ||
-    isValidatingRpcUrl;
+    !url.trim() || url !== debouncedUrl || Boolean(error) || isValidatingRpcUrl;
   const handleSubmit = () => {
     if (isSubmitDisabled) {
       return;
