@@ -29,7 +29,6 @@ export function useAddEthereumChainAlerts() {
 
   useEffect(() => {
     if (!pendingApproval) {
-      setAlerts([]);
       return;
     }
 
@@ -165,5 +164,5 @@ export function useAddEthereumChainAlerts() {
     validate();
   }, [chainId, matchedChain, pendingApproval, t]);
 
-  return alerts;
+  return pendingApproval ? alerts : [];
 }
