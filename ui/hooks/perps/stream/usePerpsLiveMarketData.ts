@@ -97,6 +97,10 @@ export function usePerpsLiveMarketData(
   // Track whether we've received real data
   const hasReceivedData = useRef(false);
   const [isInitialLoading, setIsInitialLoading] = useState(() => {
+    // No subscription ⇒ nothing to wait for (avoid setState-in-effect for this).
+    if (!autoSubscribe) {
+      return false;
+    }
     if (streamManager?.markets.hasCachedData()) {
       hasReceivedData.current = true;
       return false;
