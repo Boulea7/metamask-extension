@@ -204,4 +204,44 @@ describe('useAccountNoFundsAlert', () => {
       },
     ]);
   });
+
+  it('resets the empty-account wait when switching between empty accounts', () => {
+    jest.useFakeTimers();
+    useTransactionPayAvailableTokensMock.mockReturnValue([
+      { disabled: false },
+    ] as ReturnType<typeof useTransactionPayAvailableTokens>);
+
+    const { result, rerender } = renderHookWithConfirmation({
+      type: TransactionType.moneyAccountDeposit,
+      txParams: { from: '0xabc' },
+    } as TransactionMeta);
+
+    useTransactionAccountOverrideMock.mockReturnValue(
+      '0x1111111111111111111111111111111111111111' as Hex,
+    );
+    useTransactionPayAvailableTokensMock.mockReturnValue([]);
+    rerender();
+
+    act(() => {
+      jest.advanceTimersByTime(ACCOUNT_RESELECT_EMPTY_TIMEOUT_MS - 1);
+    });
+    expect(result.current).toStrictEqual([]);
+
+    useTransactionAccountOverrideMock.mockReturnValue(
+      '0x2222222222222222222222222222222222222222' as Hex,
+    );
+    rerender();
+
+    act(() => {
+      jest.advanceTimersByTime(ACCOUNT_RESELECT_EMPTY_TIMEOUT_MS - 1);
+    });
+    expect(result.current).toStrictEqual([]);
+
+    act(() => {
+      jest.advanceTimersByTime(1);
+    });
+
+    expect(result.current).toHaveLength(1);
+    expect(result.current[0].key).toBe(AlertsName.AccountNoFunds);
+  });
 });

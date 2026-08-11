@@ -60,14 +60,20 @@ export function useAccountNoFundsAlert(): Alert[] {
     // Funding tokens can arrive after an account override even when quote
     // loading is already false. Wait the same window as pay-token reselect
     // before treating an empty list as a final no-funds state.
+    // Depend on accountKey so switching between empty accounts clears and
+    // restarts this timer instead of letting an earlier timeout settle the
+    // newly selected account early.
+    const timeoutAccountKey = accountKey;
     const timeoutId = setTimeout(() => {
-      setWaitingAccountKey(null);
+      setWaitingAccountKey((current) =>
+        current === timeoutAccountKey ? null : current,
+      );
     }, ACCOUNT_RESELECT_EMPTY_TIMEOUT_MS);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [isWaitingForAccountTokens]);
+  }, [accountKey, isWaitingForAccountTokens]);
 
   return useMemo(() => {
     if (
