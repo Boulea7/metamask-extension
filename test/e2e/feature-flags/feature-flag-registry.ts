@@ -1282,6 +1282,15 @@ export const FEATURE_FLAG_REGISTRY: Record<string, FeatureFlagRegistryEntry> = {
     type: FeatureFlagType.Remote,
   },
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  confirmations_relay_fixed_spread: {
+    name: 'confirmations_relay_fixed_spread',
+    type: FeatureFlagType.Remote,
+    inProd: true,
+    productionDefault: {},
+    status: FeatureFlagStatus.Active,
+  },
+
   confirmations_transactions: {
     // Contains acceleratedPolling per-chain configs, batchSizeLimit, etc.
     // Storing simplified version; full value has ~100 chain entries.
