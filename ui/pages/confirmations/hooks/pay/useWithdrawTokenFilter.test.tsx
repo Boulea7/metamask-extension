@@ -162,6 +162,39 @@ describe('usePostQuoteWithdrawTokenFilter', () => {
     });
   });
 
+  it('returns allowlisted wallet tokens for money account withdraw', () => {
+    const { result } = renderUsePostQuoteWithdrawTokenFilter({
+      type: TransactionType.moneyAccountWithdraw,
+      postQuoteFlags: {
+        overrides: {
+          moneyAccountWithdraw: {
+            enabled: true,
+            tokens: { '0x8f': ['0xaca92e438df0b2401ff60da7e4337b687a2435da'] },
+          },
+        },
+      },
+    });
+
+    expect(result.current.filterTokens([])).toBe(ALL_TOKENS_MOCK);
+    expect(result.current.isFilterApplied).toBe(true);
+    expect(
+      result.current.isTokenAllowed(
+        '0x8f',
+        '0xaca92e438df0b2401ff60da7e4337b687a2435da',
+      ),
+    ).toBe(true);
+    expect(mockUseSendTokens).toHaveBeenCalledWith({
+      includeNoBalance: true,
+      tokenFilter: expect.any(Function),
+      enrichTokenRequests: [
+        {
+          address: '0xaca92e438df0b2401ff60da7e4337b687a2435da',
+          chainId: '0x8f',
+        },
+      ],
+    });
+  });
+
   it('passes a case-insensitive tokenFilter for allowlisted tokens', () => {
     renderUsePostQuoteWithdrawTokenFilter({
       postQuoteFlags: {

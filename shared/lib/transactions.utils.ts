@@ -46,6 +46,7 @@ export function hasTransactionType(
 }
 
 export const POST_QUOTE_WITHDRAW_TRANSACTION_TYPES = [
+  TransactionType.moneyAccountWithdraw,
   TransactionType.perpsWithdraw,
 ] as const;
 

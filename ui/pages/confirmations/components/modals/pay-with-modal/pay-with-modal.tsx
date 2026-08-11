@@ -172,7 +172,7 @@ export const PayWithModal = ({ isOpen, onClose }: PayWithModalProps) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader onClose={handleClose}>
-          {t('payWithModalTitle')}
+          {t(isPostQuoteWithdraw ? 'withdrawTo' : 'payWithModalTitle')}
         </ModalHeader>
         <ScrollContainer
           style={{

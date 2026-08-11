@@ -131,7 +131,7 @@ export function PayWithRow({
     canEdit,
     from,
     ownerId,
-    isPerpsWithdraw,
+    isPostQuoteWithdraw,
     openModal,
     modal,
   } = usePayWithToken();
@@ -164,7 +164,7 @@ export function PayWithRow({
             displayToken={displayToken}
             emptyLabel={t('payWithEmptySelection')}
             balanceText={` (${balanceUsdFormatted})`}
-            showBalance={Boolean(displayToken) && !isPerpsWithdraw}
+            showBalance={Boolean(displayToken) && !isPostQuoteWithdraw}
             showArrow={canEdit && Boolean(from)}
           />
         </Box>

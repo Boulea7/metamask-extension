@@ -297,6 +297,8 @@ function BottomContainer({
   const { currentConfirmation } = useConfirmContext<TransactionMeta>();
 
   const isPerpsWithdraw = isPerpsWithdrawTransaction(currentConfirmation);
+  const isPostQuoteWithdraw =
+    isPostQuoteWithdrawTransaction(currentConfirmation);
 
   return (
     <Box
@@ -318,7 +320,7 @@ function BottomContainer({
             }
           />
           <BridgeTimeRow rowVariant={ConfirmInfoRowSize.Small} />
-          {isPerpsWithdraw ? (
+          {isPostQuoteWithdraw ? (
             <ReceiveRow
               inputAmountUsd={amountFiat}
               variant={ConfirmInfoRowSize.Small}

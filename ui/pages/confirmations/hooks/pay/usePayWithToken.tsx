@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { BigNumber } from 'bignumber.js';
 import {
   hasTransactionType,
-  isPerpsWithdrawTransaction,
+  isPostQuoteWithdrawTransaction,
 } from '../../../../../shared/lib/transactions.utils';
 import { useI18nContext } from '../../../../hooks/useI18nContext';
 import { useFiatFormatter } from '../../../../hooks/useFiatFormatter';
@@ -33,7 +33,7 @@ type PayWithToken = {
   canEdit: boolean;
   from: string | undefined;
   ownerId: string;
-  isPerpsWithdraw: boolean;
+  isPostQuoteWithdraw: boolean;
   openModal: () => void;
   modal: React.ReactNode;
 };
@@ -61,11 +61,12 @@ export function usePayWithToken(): PayWithToken {
   );
 
   const canEdit = fromAccount ? !isHardwareAccount(fromAccount) : true;
-  const isPerpsWithdraw = isPerpsWithdrawTransaction(currentConfirmation);
+  const isPostQuoteWithdraw =
+    isPostQuoteWithdrawTransaction(currentConfirmation);
   // Avoid flashing the destination/required token (e.g. mUSD on Monad) while
   // payToken is cleared during account switches or initial auto-select.
   const shouldWaitForPayToken =
-    isPerpsWithdraw ||
+    isPostQuoteWithdraw ||
     hasTransactionType(currentConfirmation, [
       TransactionType.moneyAccountDeposit,
     ]);
@@ -102,11 +103,11 @@ export function usePayWithToken(): PayWithToken {
   return {
     displayToken,
     balanceUsdFormatted,
-    label: isPerpsWithdraw ? t('withdrawTo') : t('payWith'),
+    label: isPostQuoteWithdraw ? t('withdrawTo') : t('payWith'),
     canEdit,
     from,
     ownerId: currentConfirmation?.id ?? '',
-    isPerpsWithdraw,
+    isPostQuoteWithdraw,
     openModal,
     modal: isModalOpen ? (
       <PayWithModal isOpen={isModalOpen} onClose={closeModal} />
