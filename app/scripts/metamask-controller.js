@@ -337,7 +337,6 @@ import { TokenBalancesControllerInit } from './messenger-client-init/token-balan
 import { StaticAssetsControllerInit } from './messenger-client-init/static-assets-controller-init';
 import { RatesControllerInit } from './messenger-client-init/rates-controller-init';
 import { CurrencyRateControllerInit } from './messenger-client-init/currency-rate-controller-init';
-import { EnsControllerInit } from './messenger-client-init/confirmations/ens-controller-init';
 import { NameControllerInit } from './messenger-client-init/confirmations/name-controller-init';
 import { SelectedNetworkControllerInit } from './messenger-client-init/selected-network-controller-init';
 import {
@@ -663,7 +662,6 @@ export default class MetamaskController extends EventEmitter {
       ClaimsService: ClaimsServiceInit,
       GatorPermissionsController: GatorPermissionsControllerInit,
       SnapsNameProvider: SnapsNameProviderInit,
-      EnsController: EnsControllerInit,
       NameController: NameControllerInit,
       AnnouncementController: AnnouncementControllerInit,
       RewardsDataService: RewardsDataServiceInit,
@@ -815,7 +813,6 @@ export default class MetamaskController extends EventEmitter {
     this.shieldController = messengerClientsByName.ShieldController;
     this.gatorPermissionsController =
       messengerClientsByName.GatorPermissionsController;
-    this.ensController = messengerClientsByName.EnsController;
     this.nameController = messengerClientsByName.NameController;
     this.announcementController = messengerClientsByName.AnnouncementController;
     this.accountOrderController = messengerClientsByName.AccountOrderController;
@@ -1366,7 +1363,6 @@ export default class MetamaskController extends EventEmitter {
       SignatureController: this.signatureController,
       BridgeController: this.bridgeController,
       BridgeStatusController: this.bridgeStatusController,
-      EnsController: this.ensController,
       ApprovalController: this.approvalController,
     };
 
@@ -1512,7 +1508,6 @@ export default class MetamaskController extends EventEmitter {
       ),
       this.signatureController.resetState.bind(this.signatureController),
       this.bridgeController.resetState.bind(this.bridgeController),
-      this.ensController.resetState.bind(this.ensController),
       this.approvalController.clearRequests.bind(this.approvalController),
       // WE SHOULD ADD TokenListController.resetState here too. But it's not implemented yet.
     ];
@@ -2537,7 +2532,6 @@ export default class MetamaskController extends EventEmitter {
       currencyRateController,
       tokenBalancesController,
       tokenDetectionController,
-      ensController,
       tokenListController,
       gasFeeController,
       gatorPermissionsController,
@@ -3278,10 +3272,6 @@ export default class MetamaskController extends EventEmitter {
         appStateController.setShieldSubscriptionMetricsProps.bind(
           appStateController,
         ),
-
-      // EnsController
-      tryReverseResolveAddress:
-        ensController.reverseResolveAddress.bind(ensController),
 
       // OAuthService
       startOAuthLogin: this.oauthService.startOAuthLogin.bind(
