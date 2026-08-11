@@ -286,11 +286,11 @@ export const useBridgeNavigation = () => {
       navigate(`${SWAP_ASSETS_PATH}?field=${field}`, {
         state: {
           ...state,
-          bridgeState,
+          bridgeState: null,
         },
       });
     },
-    [navigate, state, bridgeState],
+    [navigate, state],
   );
 
   /**

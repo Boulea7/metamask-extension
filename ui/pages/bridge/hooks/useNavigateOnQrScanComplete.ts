@@ -42,7 +42,7 @@ export function useNavigateOnQrScanComplete(): void {
       isQrScanCleared &&
       lastQrScanCompletedSuccessfully === true
     ) {
-      navigateToDefaultRoute({ replace: true });
+      navigateToDefaultRoute({ replace: true }, false);
       return;
     }
 
