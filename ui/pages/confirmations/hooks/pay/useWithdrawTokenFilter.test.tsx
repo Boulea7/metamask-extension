@@ -115,6 +115,25 @@ describe('usePostQuoteWithdrawTokenFilter', () => {
     });
   });
 
+  it('treats an empty tokens map as no allowlist so preferred auto-select can run', () => {
+    const { result } = renderUsePostQuoteWithdrawTokenFilter({
+      postQuoteFlags: {
+        default: { enabled: true, tokens: {} },
+        overrides: {
+          moneyAccountWithdraw: { enabled: true, tokens: {} },
+        },
+      },
+      type: TransactionType.moneyAccountWithdraw,
+    });
+
+    expect(result.current.isFilterApplied).toBe(false);
+    expect(mockUseSendTokens).toHaveBeenCalledWith({
+      includeNoBalance: false,
+      tokenFilter: undefined,
+      enrichTokenRequests: [],
+    });
+  });
+
   it('returns passed-in tokens unchanged when the allowlist is disabled', () => {
     const { result } = renderUsePostQuoteWithdrawTokenFilter({
       postQuoteFlags: {

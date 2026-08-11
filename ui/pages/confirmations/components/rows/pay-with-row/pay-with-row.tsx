@@ -138,7 +138,9 @@ export function PayWithRow({
 
   // Match mobile: when the selected account has no funding tokens, show an
   // empty "Select payment method" placeholder instead of an endless skeleton.
-  if (!displayToken && !hasAccountNoFunds) {
+  // Post-quote withdraws also avoid an endless skeleton — destination tokens
+  // may still be importing/enriching; show an empty Receive selector instead.
+  if (!displayToken && !hasAccountNoFunds && !isPostQuoteWithdraw) {
     return <PayWithRowSkeleton />;
   }
 
