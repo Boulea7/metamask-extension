@@ -251,10 +251,40 @@ export const useRewardsWithQuote = ({
     ],
   );
 
-  // Estimate points when dependencies change
+  // Sync linked-timestamp map/state when the account or global timestamp changes
+  const [prevFromAddress, setPrevFromAddress] = useState(fromAddress);
+  const [prevRewardsAccountLinkedTimestamp, setPrevRewardsAccountLinkedTimestamp] =
+    useState(rewardsAccountLinkedTimestamp);
+
+  if (
+    fromAddress !== prevFromAddress ||
+    rewardsAccountLinkedTimestamp !== prevRewardsAccountLinkedTimestamp
+  ) {
+    setPrevFromAddress(fromAddress);
+    setPrevRewardsAccountLinkedTimestamp(rewardsAccountLinkedTimestamp);
+
+    if (fromAddress && rewardsAccountLinkedTimestamp !== null) {
+      localRewardsAccountLinkedTimestamp.current.set(
+        fromAddress,
+        rewardsAccountLinkedTimestamp,
+      );
+      setCurrentAccountLinkedTimestamp(rewardsAccountLinkedTimestamp);
+    } else if (fromAddress) {
+      const storedTimestamp =
+        localRewardsAccountLinkedTimestamp.current.get(fromAddress);
+      setCurrentAccountLinkedTimestamp(storedTimestamp ?? null);
+    } else {
+      setCurrentAccountLinkedTimestamp(null);
+    }
+  }
+
+  // Estimate points when quote request id changes
   useEffect(() => {
     if (prevRequestId !== quote?.requestId) {
-      estimatePoints(quote);
+      // Defer so estimatePoints' synchronous loading resets are not in the effect body
+      queueMicrotask(() => {
+        estimatePoints(quote);
+      });
     }
   }, [
     estimatePoints,
@@ -264,29 +294,13 @@ export const useRewardsWithQuote = ({
     prevRequestId,
   ]);
 
-  // Update the local map when the global timestamp changes for the current account
-  useEffect(() => {
-    if (fromAddress && rewardsAccountLinkedTimestamp !== null) {
-      localRewardsAccountLinkedTimestamp.current.set(
-        fromAddress,
-        rewardsAccountLinkedTimestamp,
-      );
-      setCurrentAccountLinkedTimestamp(rewardsAccountLinkedTimestamp);
-    } else if (fromAddress) {
-      // When account changes, get the stored timestamp for this account
-      const storedTimestamp =
-        localRewardsAccountLinkedTimestamp.current.get(fromAddress);
-      setCurrentAccountLinkedTimestamp(storedTimestamp ?? null);
-    } else {
-      setCurrentAccountLinkedTimestamp(null);
-    }
-  }, [rewardsAccountLinkedTimestamp, fromAddress]);
-
   // Re-estimate points when account linked timestamp changes and account has opted in False
   // Only trigger if the current account has a linked timestamp (was actually linked)
   useEffect(() => {
     if (currentAccountLinkedTimestamp !== null && accountOptedIn === false) {
-      estimatePoints(quote);
+      queueMicrotask(() => {
+        estimatePoints(quote);
+      });
     }
   }, [currentAccountLinkedTimestamp, accountOptedIn, estimatePoints, quote]);
 

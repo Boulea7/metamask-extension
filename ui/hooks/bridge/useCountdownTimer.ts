@@ -18,12 +18,22 @@ export const useCountdownTimer = () => {
   const refreshRate = useSelector(getQuoteRefreshRate);
 
   const [timeRemaining, setTimeRemaining] = useState(refreshRate + STEP);
+  const [prevQuotesLastFetchedMs, setPrevQuotesLastFetchedMs] =
+    useState(quotesLastFetchedMs);
+  const [prevRefreshRate, setPrevRefreshRate] = useState(refreshRate);
 
-  useEffect(() => {
+  if (
+    quotesLastFetchedMs !== prevQuotesLastFetchedMs ||
+    refreshRate !== prevRefreshRate
+  ) {
+    setPrevQuotesLastFetchedMs(quotesLastFetchedMs);
+    setPrevRefreshRate(refreshRate);
     if (quotesLastFetchedMs) {
-      setTimeRemaining(refreshRate - (Date.now() - quotesLastFetchedMs) + STEP);
+      setTimeRemaining(
+        refreshRate - (Date.now() - quotesLastFetchedMs) + STEP,
+      );
     }
-  }, [quotesLastFetchedMs, refreshRate]);
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {

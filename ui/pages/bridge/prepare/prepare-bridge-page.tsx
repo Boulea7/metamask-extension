@@ -246,8 +246,13 @@ const PrepareBridgePage = ({
   // from switching tokens within the debounce period
   const [isSwitchingTemporarilyDisabled, setIsSwitchingTemporarilyDisabled] =
     useState(false);
-  useEffect(() => {
+  const [prevRotateSwitchTokens, setPrevRotateSwitchTokens] =
+    useState(rotateSwitchTokens);
+  if (rotateSwitchTokens !== prevRotateSwitchTokens) {
+    setPrevRotateSwitchTokens(rotateSwitchTokens);
     setIsSwitchingTemporarilyDisabled(true);
+  }
+  useEffect(() => {
     const switchButtonTimer = setTimeout(() => {
       setIsSwitchingTemporarilyDisabled(false);
     }, SECOND);

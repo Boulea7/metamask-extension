@@ -1,28 +1,30 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { type BridgeAlert } from '../prepare/types';
+
+const buildAlertVisibility = (tokenAlerts: BridgeAlert[]) =>
+  tokenAlerts.reduce(
+    (acc, { id, isDismissable }) => {
+      if (!isDismissable) {
+        return acc;
+      }
+      acc[id] = true;
+      return acc;
+    },
+    {} as { [key: string]: boolean },
+  );
 
 export const useDismissableAlerts = (tokenAlerts: BridgeAlert[]) => {
   // Track the visibility of each alert
   const [alertVisibility, setAlertVisibility] = useState<{
     [key: string]: boolean;
-  }>({});
+  }>(() => buildAlertVisibility(tokenAlerts));
+
   // Reset the alert visibility when new alerts are found
-  useEffect(
-    () =>
-      setAlertVisibility(
-        tokenAlerts.reduce(
-          (acc, { id, isDismissable }) => {
-            if (!isDismissable) {
-              return acc;
-            }
-            acc[id] = true;
-            return acc;
-          },
-          {} as { [key: string]: boolean },
-        ),
-      ),
-    [tokenAlerts],
-  );
+  const [prevTokenAlerts, setPrevTokenAlerts] = useState(tokenAlerts);
+  if (tokenAlerts !== prevTokenAlerts) {
+    setPrevTokenAlerts(tokenAlerts);
+    setAlertVisibility(buildAlertVisibility(tokenAlerts));
+  }
 
   const dismissAlert = useCallback(
     (id: string) =>

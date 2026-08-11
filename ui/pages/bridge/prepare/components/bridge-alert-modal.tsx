@@ -103,12 +103,17 @@ export const BridgeAlertModal = ({
   ]);
 
   // Reset the active alert index when the modal visibility changes
-  useEffect(() => {
+  const [prevIsModalOpen, setPrevIsModalOpen] = useState(isModalOpen);
+  if (isModalOpen !== prevIsModalOpen) {
+    setPrevIsModalOpen(isModalOpen);
     setActiveAlertIndex(0);
+  }
+
+  useEffect(() => {
     if (!isModalOpen) {
       onClose();
     }
-  }, [isModalOpen]);
+  }, [isModalOpen, onClose]);
 
   return activeAlert ? (
     <Modal

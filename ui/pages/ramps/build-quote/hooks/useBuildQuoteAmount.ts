@@ -1,6 +1,5 @@
 import {
   useCallback,
-  useEffect,
   useMemo,
   useState,
   type ChangeEvent,
@@ -18,12 +17,10 @@ export function useBuildQuoteAmount(regionDefaultAmount?: number) {
   const amountAsNumber = useMemo(() => parseFiatAmount(amount), [amount]);
   const debouncedAmount = useDebouncedValue(amountAsNumber, QUOTE_DEBOUNCE_MS);
 
-  useEffect(() => {
-    if (!userHasEnteredAmount && regionDefaultAmount !== undefined) {
-      setAmount(String(regionDefaultAmount));
-      setUserHasEnteredAmount(true);
-    }
-  }, [regionDefaultAmount, userHasEnteredAmount]);
+  if (!userHasEnteredAmount && regionDefaultAmount !== undefined) {
+    setAmount(String(regionDefaultAmount));
+    setUserHasEnteredAmount(true);
+  }
 
   const handleAmountChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
