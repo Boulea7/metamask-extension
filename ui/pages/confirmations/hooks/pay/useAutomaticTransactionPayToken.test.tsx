@@ -551,7 +551,7 @@ describe('useAutomaticTransactionPayToken', () => {
     });
   });
 
-  it('settles with the required-token fallback after empty-account reselect timeout', () => {
+  it('leaves pay token unset after empty-account reselect timeout', () => {
     jest.useFakeTimers();
     useTransactionPayAvailableTokensMock.mockReturnValue([
       { address: TOKEN_ADDRESS_2_MOCK, chainId: CHAIN_ID_2_MOCK },
@@ -577,10 +577,9 @@ describe('useAutomaticTransactionPayToken', () => {
       jest.advanceTimersByTime(ACCOUNT_RESELECT_EMPTY_TIMEOUT_MS);
     });
 
-    expect(setPayTokenMock).toHaveBeenCalledWith({
-      address: TOKEN_ADDRESS_1_MOCK,
-      chainId: CHAIN_ID_1_MOCK,
-    });
+    // Deposit flows intentionally do not fall back to the required destination
+    // token when the selected account has no funding balance.
+    expect(setPayTokenMock).not.toHaveBeenCalled();
   });
 
   it('selects preferred flag token with highest fiat balance among eligible tokens', () => {

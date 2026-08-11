@@ -162,10 +162,10 @@ export function useAutomaticTransactionPayToken({
       return;
     }
 
-    // Wait for the new account's funding tokens before selecting. Otherwise
-    // getBestToken falls back to the required destination token (mUSD on
-    // Monad) and the Pay-with row briefly shows that instead of a loader.
-    // If tokens never arrive (truly empty account), settle after timeout.
+    // Wait for the new account's funding tokens before selecting. Tokens can
+    // arrive after the account override, and selecting too early leaves the
+    // Pay-with row empty or briefly wrong. If tokens never arrive (truly empty
+    // account), settle after timeout without a destination-token fallback.
     if (tokensWithBalance.length === 0 && !emptyAccountReselectTimedOut) {
       return;
     }
