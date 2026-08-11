@@ -1,7 +1,6 @@
 import React, {
   FunctionComponent,
   useCallback,
-  useEffect,
   useMemo,
   useRef,
 } from 'react';
@@ -105,13 +104,17 @@ export const SnapUIDateTimePicker: FunctionComponent<
   const [value, setValue] = React.useState<DateTime | null>(() =>
     parseInitialIsoValue(initialValue, type),
   );
+  const [prevInitialValue, setPrevInitialValue] = React.useState(initialValue);
+  const [prevType, setPrevType] = React.useState(type);
 
-  useEffect(() => {
+  if (initialValue !== prevInitialValue || type !== prevType) {
+    setPrevInitialValue(initialValue);
+    setPrevType(type);
     const parsed = parseInitialIsoValue(initialValue, type);
     if (parsed !== null) {
       setValue(parsed);
     }
-  }, [initialValue, type]);
+  }
 
   const draftRef = useRef<DateTime | null>(null);
 
