@@ -1,14 +1,17 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react';
 import {
   TransactionMeta,
   TransactionType,
 } from '@metamask/transaction-controller';
+import type { Hex } from '@metamask/utils';
 import React from 'react';
 import { Severity } from '../../../../../helpers/constants/design-system';
 import { RowAlertKey } from '../../../../../components/app/confirm/info/row/constants';
 import { ConfirmContext } from '../../../context/confirm';
+import { ACCOUNT_RESELECT_EMPTY_TIMEOUT_MS } from '../../pay/useAutomaticTransactionPayToken';
 import { useTransactionPayAvailableTokens } from '../../pay/useTransactionPayAvailableTokens';
 import { useIsTransactionPayLoading } from '../../pay/useTransactionPayData';
+import { useTransactionAccountOverride } from '../../transactions/useTransactionAccountOverride';
 import { AlertsName } from '../constants';
 import { useAccountNoFundsAlert } from './useAccountNoFundsAlert';
 
@@ -17,6 +20,7 @@ jest.mock('../../pay/useTransactionPayData', () => ({
   ...jest.requireActual('../../pay/useTransactionPayData'),
   useIsTransactionPayLoading: jest.fn(),
 }));
+jest.mock('../../transactions/useTransactionAccountOverride');
 jest.mock('../../../../../hooks/useI18nContext', () => ({
   useI18nContext: () => (key: string) => key,
 }));
@@ -48,14 +52,19 @@ describe('useAccountNoFundsAlert', () => {
   const useIsTransactionPayLoadingMock = jest.mocked(
     useIsTransactionPayLoading,
   );
+  const useTransactionAccountOverrideMock = jest.mocked(
+    useTransactionAccountOverride,
+  );
 
   beforeEach(() => {
     jest.resetAllMocks();
+    jest.useRealTimers();
 
     useTransactionPayAvailableTokensMock.mockReturnValue([
       { disabled: false },
     ] as ReturnType<typeof useTransactionPayAvailableTokens>);
     useIsTransactionPayLoadingMock.mockReturnValue(false);
+    useTransactionAccountOverrideMock.mockReturnValue(undefined);
   });
 
   it('returns alert for moneyAccountDeposit with no available tokens', () => {
@@ -130,5 +139,69 @@ describe('useAccountNoFundsAlert', () => {
     } as TransactionMeta);
 
     expect(result.current).toStrictEqual([]);
+  });
+
+  it('does not flash alert while funding tokens load after account override', () => {
+    jest.useFakeTimers();
+    useTransactionPayAvailableTokensMock.mockReturnValue([
+      { disabled: false },
+    ] as ReturnType<typeof useTransactionPayAvailableTokens>);
+
+    const { result, rerender } = renderHookWithConfirmation({
+      type: TransactionType.moneyAccountDeposit,
+      txParams: { from: '0xabc' },
+    } as TransactionMeta);
+
+    expect(result.current).toStrictEqual([]);
+
+    useTransactionAccountOverrideMock.mockReturnValue(
+      '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as Hex,
+    );
+    useTransactionPayAvailableTokensMock.mockReturnValue([]);
+    rerender();
+
+    expect(result.current).toStrictEqual([]);
+
+    useTransactionPayAvailableTokensMock.mockReturnValue([
+      { disabled: false },
+    ] as ReturnType<typeof useTransactionPayAvailableTokens>);
+    rerender();
+
+    expect(result.current).toStrictEqual([]);
+  });
+
+  it('returns alert after account-reselect empty timeout when tokens stay empty', () => {
+    jest.useFakeTimers();
+    useTransactionPayAvailableTokensMock.mockReturnValue([
+      { disabled: false },
+    ] as ReturnType<typeof useTransactionPayAvailableTokens>);
+
+    const { result, rerender } = renderHookWithConfirmation({
+      type: TransactionType.moneyAccountDeposit,
+      txParams: { from: '0xabc' },
+    } as TransactionMeta);
+
+    useTransactionAccountOverrideMock.mockReturnValue(
+      '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as Hex,
+    );
+    useTransactionPayAvailableTokensMock.mockReturnValue([]);
+    rerender();
+
+    expect(result.current).toStrictEqual([]);
+
+    act(() => {
+      jest.advanceTimersByTime(ACCOUNT_RESELECT_EMPTY_TIMEOUT_MS);
+    });
+
+    expect(result.current).toStrictEqual([
+      {
+        key: AlertsName.AccountNoFunds,
+        field: RowAlertKey.PayWith,
+        reason: 'alertAccountNoFundsTitle',
+        message: 'alertAccountNoFundsMessage',
+        severity: Severity.Danger,
+        isBlocking: true,
+      },
+    ]);
   });
 });
