@@ -173,26 +173,22 @@ export const ExternalLinkButton = (props: {
     return promise;
   }, [externalLinkUrl]);
 
+  const [prevExternalLinkUrl, setPrevExternalLinkUrl] =
+    useState(externalLinkUrl);
+  if (externalLinkUrl !== prevExternalLinkUrl) {
+    setPrevExternalLinkUrl(externalLinkUrl);
+    resolvedHrefRef.current = undefined;
+    pendingResolvedHrefRef.current = undefined;
+    setResolvedHref(undefined);
+  }
+
   useEffect(() => {
     if (!externalLinkUrl) {
-      resolvedHrefRef.current = undefined;
-      pendingResolvedHrefRef.current = undefined;
-      setResolvedHref(undefined);
-      return;
+      return undefined;
     }
 
     let isMounted = true;
     const sourceUrl = externalLinkUrl;
-
-    if (resolvedHrefRef.current?.sourceUrl !== sourceUrl) {
-      resolvedHrefRef.current = undefined;
-    }
-
-    setResolvedHref((currentResolvedHref) =>
-      currentResolvedHref?.sourceUrl === sourceUrl
-        ? currentResolvedHref
-        : undefined,
-    );
 
     const pendingResolvedHref = resolveHref();
     pendingResolvedHref

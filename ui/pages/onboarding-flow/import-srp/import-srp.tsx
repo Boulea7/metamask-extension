@@ -98,9 +98,13 @@ export default function ImportSRP({
     submitSecretRecoveryPhrase,
   ]);
 
-  useEffect(() => {
+  const [prevSecretRecoveryPhrase, setPrevSecretRecoveryPhrase] = useState(
+    secretRecoveryPhrase,
+  );
+  if (secretRecoveryPhrase !== prevSecretRecoveryPhrase) {
+    setPrevSecretRecoveryPhrase(secretRecoveryPhrase);
     setSrpError('');
-  }, [secretRecoveryPhrase]);
+  }
 
   return (
     <Box

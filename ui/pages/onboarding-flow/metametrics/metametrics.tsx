@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import log from 'loglevel';
@@ -131,23 +131,35 @@ export default function OnboardingMetametrics() {
   const [
     isParticipateInMetaMetricsChecked,
     setIsParticipateInMetaMetricsChecked,
-  ] = useState(true);
+  ] = useState(() => (completedMetaMetricsOnboarding ? isOptedIn : true));
   const [
     isDataCollectionForMarketingChecked,
     setIsDataCollectionForMarketingChecked,
-  ] = useState(false);
+  ] = useState(() => Boolean(dataCollectionForMarketing));
 
   const participateCheckboxRef = useRef<{ toggle: () => void } | null>(null);
   const marketingCheckboxRef = useRef<{ toggle: () => void } | null>(null);
 
-  useEffect(() => {
+  const [prevCompletedMetaMetricsOnboarding, setPrevCompletedMetaMetricsOnboarding] =
+    useState(completedMetaMetricsOnboarding);
+  const [prevIsOptedIn, setPrevIsOptedIn] = useState(isOptedIn);
+  const [prevDataCollectionForMarketing, setPrevDataCollectionForMarketing] =
+    useState(dataCollectionForMarketing);
+  if (
+    completedMetaMetricsOnboarding !== prevCompletedMetaMetricsOnboarding ||
+    isOptedIn !== prevIsOptedIn ||
+    dataCollectionForMarketing !== prevDataCollectionForMarketing
+  ) {
+    setPrevCompletedMetaMetricsOnboarding(completedMetaMetricsOnboarding);
+    setPrevIsOptedIn(isOptedIn);
+    setPrevDataCollectionForMarketing(dataCollectionForMarketing);
     if (completedMetaMetricsOnboarding) {
       setIsParticipateInMetaMetricsChecked(isOptedIn);
     }
     if (dataCollectionForMarketing) {
       setIsDataCollectionForMarketingChecked(dataCollectionForMarketing);
     }
-  }, [completedMetaMetricsOnboarding, isOptedIn, dataCollectionForMarketing]);
+  }
 
   const currentKeyring = useSelector(getCurrentKeyring);
 

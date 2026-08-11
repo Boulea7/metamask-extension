@@ -231,46 +231,42 @@ const ShieldPlan = () => {
     return availableTokenBalances[0];
   });
 
-  // set selected token to the first available token if no token is selected
-  useEffect(() => {
-    if (
-      pendingAvailableTokenBalances ||
-      selectedToken ||
-      availableTokenBalances.length === 0
-    ) {
-      return;
-    }
-
-    const lastUsedPaymentToken = lastUsedPaymentDetails?.paymentTokenAddress;
-    const lastUsedPaymentMethod = lastUsedPaymentDetails?.type;
-    const lastUsedPaymentPlan = lastUsedPaymentDetails?.plan;
-
-    let lastUsedSelectedToken = availableTokenBalances[0];
-    if (
-      lastUsedPaymentToken &&
-      lastUsedPaymentMethod === PAYMENT_TYPES.byCrypto &&
-      lastUsedPaymentPlan === selectedPlan
-    ) {
-      lastUsedSelectedToken =
-        availableTokenBalances.find(
-          (token) => token.address === lastUsedPaymentToken,
-        ) || availableTokenBalances[0];
-    }
-
-    setSelectedToken(lastUsedSelectedToken);
-  }, [
-    pendingAvailableTokenBalances,
-    availableTokenBalances,
-    selectedToken,
-    setSelectedToken,
-    lastUsedPaymentDetails,
-    selectedPlan,
-  ]);
-
   // reset selected token if selected plan changes
-  useEffect(() => {
+  const [prevSelectedPlan, setPrevSelectedPlan] = useState(selectedPlan);
+  if (selectedPlan !== prevSelectedPlan) {
+    setPrevSelectedPlan(selectedPlan);
     setSelectedToken(undefined);
-  }, [selectedPlan, setSelectedToken]);
+  }
+
+  // set selected token to the first available token if no token is selected
+  const shouldSelectDefaultToken =
+    !pendingAvailableTokenBalances &&
+    !selectedToken &&
+    availableTokenBalances.length > 0;
+  const [prevShouldSelectDefaultToken, setPrevShouldSelectDefaultToken] =
+    useState(false);
+  if (shouldSelectDefaultToken !== prevShouldSelectDefaultToken) {
+    setPrevShouldSelectDefaultToken(shouldSelectDefaultToken);
+    if (shouldSelectDefaultToken) {
+      const lastUsedPaymentToken = lastUsedPaymentDetails?.paymentTokenAddress;
+      const lastUsedPaymentMethod = lastUsedPaymentDetails?.type;
+      const lastUsedPaymentPlan = lastUsedPaymentDetails?.plan;
+
+      let lastUsedSelectedToken = availableTokenBalances[0];
+      if (
+        lastUsedPaymentToken &&
+        lastUsedPaymentMethod === PAYMENT_TYPES.byCrypto &&
+        lastUsedPaymentPlan === selectedPlan
+      ) {
+        lastUsedSelectedToken =
+          availableTokenBalances.find(
+            (token) => token.address === lastUsedPaymentToken,
+          ) || availableTokenBalances[0];
+      }
+
+      setSelectedToken(lastUsedSelectedToken);
+    }
+  }
 
   const selectedTokenAddress = selectedToken?.address;
 
@@ -280,28 +276,38 @@ const ShieldPlan = () => {
 
   // set default selected payment method to crypto if selected token available
   // should only trigger if selectedTokenAddress change (shouldn't trigger again if selected token object updated but still same token)
-  useEffect(() => {
-    // Skip auto-selection after initial setup to prevent switching after payment cancel
+  const [prevSelectedTokenAddress, setPrevSelectedTokenAddress] = useState(
+    selectedTokenAddress,
+  );
+  const [prevLastUsedPaymentDetails, setPrevLastUsedPaymentDetails] = useState(
+    lastUsedPaymentDetails,
+  );
+  if (
+    selectedTokenAddress !== prevSelectedTokenAddress ||
+    lastUsedPaymentDetails !== prevLastUsedPaymentDetails
+  ) {
+    setPrevSelectedTokenAddress(selectedTokenAddress);
+    setPrevLastUsedPaymentDetails(lastUsedPaymentDetails);
+
     if (hasInitializedPaymentMethod.current) {
       // Only handle the case when selectedTokenAddress becomes undefined (no tokens available)
       if (!selectedTokenAddress) {
         setSelectedPaymentMethod(PAYMENT_TYPES.byCard);
       }
-      return;
-    }
-
-    const lastUsedPaymentMethod = lastUsedPaymentDetails?.type;
-    if (
-      selectedTokenAddress &&
-      lastUsedPaymentMethod !== PAYMENT_TYPES.byCard
-    ) {
-      setSelectedPaymentMethod(PAYMENT_TYPES.byCrypto);
     } else {
-      // should reset to byCard when selectedTokenAddress becomes undefined (no tokens available)
-      // to prevent switching to a plan without available tokens leaves selectedPaymentMethod as byCrypto with no tokens
-      setSelectedPaymentMethod(PAYMENT_TYPES.byCard);
+      const lastUsedPaymentMethod = lastUsedPaymentDetails?.type;
+      if (
+        selectedTokenAddress &&
+        lastUsedPaymentMethod !== PAYMENT_TYPES.byCard
+      ) {
+        setSelectedPaymentMethod(PAYMENT_TYPES.byCrypto);
+      } else {
+        // should reset to byCard when selectedTokenAddress becomes undefined (no tokens available)
+        // to prevent switching to a plan without available tokens leaves selectedPaymentMethod as byCrypto with no tokens
+        setSelectedPaymentMethod(PAYMENT_TYPES.byCard);
+      }
     }
-  }, [selectedTokenAddress, setSelectedPaymentMethod, lastUsedPaymentDetails]);
+  }
 
   const tokensSupported = useMemo(() => {
     const chainsAndTokensSupported = cryptoPaymentMethod?.chains ?? [];

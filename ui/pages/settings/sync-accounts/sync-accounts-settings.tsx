@@ -78,13 +78,13 @@ const SyncAccountsSettings = () => {
     };
   }, [cancelQrSyncSession, createQrSyncSession, isExiting]);
 
-  useEffect(() => {
-    if (qrSyncPhase === QR_SYNC_PHASES.REVIEWING_SYNC_OFFER) {
-      return;
+  const [prevQrSyncPhase, setPrevQrSyncPhase] = useState(qrSyncPhase);
+  if (qrSyncPhase !== prevQrSyncPhase) {
+    setPrevQrSyncPhase(qrSyncPhase);
+    if (qrSyncPhase !== QR_SYNC_PHASES.REVIEWING_SYNC_OFFER) {
+      setPassword(undefined);
     }
-
-    setPassword(undefined);
-  }, [qrSyncPhase]);
+  }
 
   const handleExit = useCallback(async () => {
     setIsExiting(true);

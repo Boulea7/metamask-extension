@@ -27,9 +27,6 @@ export default function WelcomeLogin({
   skipTransition?: boolean;
 }) {
   const t = useI18nContext();
-  const [showLoginOptions, setShowLoginOptions] = useState(false);
-  const [loginOption, setLoginOption] = useState<LoginOptionType | null>(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const isSeedlessOnboardingFeatureEnabled =
     getIsSeedlessOnboardingFeatureEnabled();
   const dispatch = useDispatch();
@@ -38,6 +35,13 @@ export default function WelcomeLogin({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const loginParam = searchParams.get('login');
+  const [showLoginOptions, setShowLoginOptions] = useState(
+    Boolean(loginParam),
+  );
+  const [loginOption, setLoginOption] = useState<LoginOptionType | null>(
+    (loginParam as LoginOptionType | null) ?? null,
+  );
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -48,7 +52,9 @@ export default function WelcomeLogin({
     };
   }, []);
 
-  useEffect(() => {
+  const [prevLoginParam, setPrevLoginParam] = useState(loginParam);
+  if (loginParam !== prevLoginParam) {
+    setPrevLoginParam(loginParam);
     if (loginParam) {
       setShowLoginOptions(true);
       setLoginOption(loginParam as LoginOptionType);
@@ -56,7 +62,7 @@ export default function WelcomeLogin({
       setShowLoginOptions(false);
       setLoginOption(null);
     }
-  }, [loginParam]);
+  }
 
   const handleLogin = useCallback(
     async (loginType: LoginType) => {

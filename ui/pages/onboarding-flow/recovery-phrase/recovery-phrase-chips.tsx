@@ -133,7 +133,9 @@ export default function RecoveryPhraseChips({
     setInputValue?.(quizAnswers);
   }, [quizAnswers, setInputValue]);
 
-  useEffect(() => {
+  const [prevQuizWords, setPrevQuizWords] = useState(quizWords);
+  if (quizWords !== prevQuizWords) {
+    setPrevQuizWords(quizWords);
     if (quizWords.length) {
       const newQuizAnswers = quizWords.map((word) => ({
         index: word.index,
@@ -143,7 +145,7 @@ export default function RecoveryPhraseChips({
       setQuizAnswers(newQuizAnswers);
       setIndexToFocus(setNextTargetIndex(newQuizAnswers));
     }
-  }, [quizWords]);
+  }
 
   // obfuscate the blurred recovery phrase to prevent blur-reversal attacks
   // from revealing the underlying words.
