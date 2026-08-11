@@ -3402,12 +3402,6 @@
   "disconnectAllAccountsConfirmationDescription": {
     "message": "Anda yakin ingin memutus koneksi? Fungsionalitas situs Anda bisa hilang."
   },
-  "disconnectAllSites": {
-    "message": "Putuskan Semua Koneksi"
-  },
-  "disconnectAllSitesDescriptionText": {
-    "message": "Jika Anda memutuskan koneksi dari semua situs, Anda perlu menghubungkan kembali akun dan jaringan Anda untuk dapat menggunakannya lagi."
-  },
   "disconnectAllSitesError": {
     "message": "Beberapa dapp tidak dapat diputus koneksinya. Coba lagi."
   },

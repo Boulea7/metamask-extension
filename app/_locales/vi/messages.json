@@ -3402,12 +3402,6 @@
   "disconnectAllAccountsConfirmationDescription": {
     "message": "Bạn có chắc chắn muốn ngắt kết nối không? Bạn có thể bị mất chức năng của trang web."
   },
-  "disconnectAllSites": {
-    "message": "Ngắt kết nối tất cả"
-  },
-  "disconnectAllSitesDescriptionText": {
-    "message": "Nếu bạn ngắt kết nối khỏi tất cả các trang web, bạn sẽ cần kết nối lại tài khoản và mạng để sử dụng lại."
-  },
   "disconnectAllSitesError": {
     "message": "Không thể ngắt kết nối một số dapp. Vui lòng thử lại."
   },

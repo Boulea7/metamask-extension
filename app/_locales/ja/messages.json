@@ -3402,12 +3402,6 @@
   "disconnectAllAccountsConfirmationDescription": {
     "message": "本当に接続解除しますか？サイトの機能を失う可能性があります。"
   },
-  "disconnectAllSites": {
-    "message": "すべて接続解除"
-  },
-  "disconnectAllSitesDescriptionText": {
-    "message": "すべてのサイトとの接続を解除すると、これらをもう一度使用するには、アカウントとネットワークを接続しなおす必要があります。"
-  },
   "disconnectAllSitesError": {
     "message": "一部のDAppの接続を解除できませんでした。もう一度お試しください。"
   },

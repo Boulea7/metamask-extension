@@ -3402,12 +3402,6 @@
   "disconnectAllAccountsConfirmationDescription": {
     "message": "您确定要断开连接吗？您可能会失去网站功能。"
   },
-  "disconnectAllSites": {
-    "message": "断开所有连接"
-  },
-  "disconnectAllSitesDescriptionText": {
-    "message": "如果您断开与所有网站的连接，您需要重新连接账户和网络才能继续使用它们。"
-  },
   "disconnectAllSitesError": {
     "message": "部分去中心化应用无法断开连接。请重试。"
   },

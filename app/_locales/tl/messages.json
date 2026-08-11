@@ -3402,12 +3402,6 @@
   "disconnectAllAccountsConfirmationDescription": {
     "message": "Sigurado ka bang gusto mong idiskonekta? Maaaring mawala ang functionality ng site."
   },
-  "disconnectAllSites": {
-    "message": "Idiskonekta Lahat"
-  },
-  "disconnectAllSitesDescriptionText": {
-    "message": "Kapag idiniskonekta mo sa lahat ng site, kakailanganin mong muling ikonekta ang mga account at network mo para magamit muli ang mga iyon."
-  },
   "disconnectAllSitesError": {
     "message": "Hindi maaaring idiskonekta ang ilang mga dapp. Pakisubukan muli."
   },

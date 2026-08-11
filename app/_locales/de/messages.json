@@ -3402,12 +3402,6 @@
   "disconnectAllAccountsConfirmationDescription": {
     "message": "Sind Sie sicher, dass Sie die Verbindung trennen möchten? Sie könnten die Seitenfunktionalität verlieren."
   },
-  "disconnectAllSites": {
-    "message": "Alle trennen"
-  },
-  "disconnectAllSitesDescriptionText": {
-    "message": "Wenn Sie die Verbindung zu allen Websites trennen, müssen Sie Ihre Konten und Netzwerke erneut verbinden, um sie wieder nutzen zu können."
-  },
   "disconnectAllSitesError": {
     "message": "Einige dApp konnten nicht getrennt werden. Bitte versuchen Sie es erneut."
   },

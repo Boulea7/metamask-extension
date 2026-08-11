@@ -3402,12 +3402,6 @@
   "disconnectAllAccountsConfirmationDescription": {
     "message": "Quer mesmo desconectar? Você pode perder a funcionalidade do site."
   },
-  "disconnectAllSites": {
-    "message": "Desconectar tudo"
-  },
-  "disconnectAllSitesDescriptionText": {
-    "message": "Se desconectar de todos os sites, você precisará reconectar suas contas e redes para usá-las novamente."
-  },
   "disconnectAllSitesError": {
     "message": "Não foi possível desconectar alguns dos dapps. Tente novamente."
   },
